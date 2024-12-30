@@ -1,7 +1,7 @@
 const { ethers } = require("ethers");
 
 async function main() {
-  const contractAddress = "0xYourDeployedContractAddress";
+  const contractAddress = "address";
   const abi = [
     "function addBook(string ISBN, string title, string author, string publisher, uint256 year) public",
     "function getBook(string ISBN) public view returns (string, string, string, uint256)",
