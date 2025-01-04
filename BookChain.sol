@@ -4,52 +4,53 @@ pragma solidity ^0.8.0;
 contract BookChain {
     // Struct to store book details
     struct Book {
-        // Identification info
-        string ISBN;
+        string id;
+        string eTag;
         string title;
+        string subtitle;
         string author;
         string publisher;
-        uint256 year;
-        // Additional info
-        uint256 edition;
+        string publishedDate;
+        string description;
+        string ISBN_10;
+        string ISBN_13;
+        uint pageCount;
+        string[] categories;
         string language;
-        string copyright;
-        string barcode;
-        // Physical attributes
-        string size;
-        string weight;
-        string coverType;
-        uint256 pageCount;
-        // Digital info
-        string digitalFileLink;
-        string doi;
-        // Related documents
-        string invoiceDetails;
-        string publisherConfirmation;
-        string intellectualPropertyRegistration;
-        bool exists;
+        string saleInfo;
+        string saleability;
+        bool isEBook;
+        bool epub; // Simplified for demonstration
+        bool pdf; // Simplified for demonstration
+        string accessInfo;
+        string viewability;
+        bool publicDomain;
+        bool exists; // To check existence in mapping
     }
 
     // Struct for input parameters to avoid stack too deep
     struct BookInput {
-        string ISBN;
+        string id;
+        string eTag;
         string title;
+        string subtitle;
         string author;
         string publisher;
-        uint256 year;
-        uint256 edition;
+        string publishedDate;
+        string description;
+        string ISBN_10;
+        string ISBN_13;
+        uint pageCount;
+        string[] categories;
         string language;
-        string copyright;
-        string barcode;
-        string size;
-        string weight;
-        string coverType;
-        uint256 pageCount;
-        string digitalFileLink;
-        string doi;
-        string invoiceDetails;
-        string publisherConfirmation;
-        string intellectualPropertyRegistration;
+        string saleInfo;
+        string saleability;
+        bool isEBook;
+        bool epub;
+        bool pdf;
+        string accessInfo;
+        string viewability;
+        bool publicDomain;
     }
 
     // Mapping to store books based on ISBN
@@ -76,65 +77,33 @@ contract BookChain {
      */
     function addBook(
         BookInput memory input
-    ) public bookDoesNotExist(input.ISBN) {
-        // Input validation
-        require(bytes(input.ISBN).length > 0, "ISBN cannot be empty");
-        require(bytes(input.title).length > 0, "Title cannot be empty");
-        require(bytes(input.author).length > 0, "Author cannot be empty");
-        require(bytes(input.publisher).length > 0, "Publisher cannot be empty");
-        require(input.year > 0, "Year must be greater than zero");
-        require(input.edition > 0, "Edition must be greater than zero");
-        require(bytes(input.language).length > 0, "Language cannot be empty");
-        require(bytes(input.copyright).length > 0, "Copyright cannot be empty");
-        require(bytes(input.barcode).length > 0, "Barcode cannot be empty");
-        require(bytes(input.size).length > 0, "Size cannot be empty");
-        require(bytes(input.weight).length > 0, "Weight cannot be empty");
-        require(
-            bytes(input.coverType).length > 0,
-            "Cover type cannot be empty"
-        );
-        require(
-            bytes(input.digitalFileLink).length > 0,
-            "Digital file link cannot be empty"
-        );
-        require(bytes(input.doi).length > 0, "DOI cannot be empty");
-        require(
-            bytes(input.invoiceDetails).length > 0,
-            "Invoice details cannot be empty"
-        );
-        require(
-            bytes(input.publisherConfirmation).length > 0,
-            "Publisher confirmation cannot be empty"
-        );
-        require(
-            bytes(input.intellectualPropertyRegistration).length > 0,
-            "Intellectual property registration cannot be empty"
+    ) public bookDoesNotExist(input.ISBN_13) {
+        books[input.ISBN_13] = Book(
+            input.id,
+            input.eTag,
+            input.title,
+            input.subtitle,
+            input.author,
+            input.publisher,
+            input.publishedDate,
+            input.description,
+            input.ISBN_10,
+            input.ISBN_13,
+            input.pageCount,
+            input.categories,
+            input.language,
+            input.saleInfo,
+            input.saleability,
+            input.isEBook,
+            input.epub,
+            input.pdf,
+            input.accessInfo,
+            input.viewability,
+            input.publicDomain,
+            true // Mark as exists
         );
 
-        books[input.ISBN] = Book({
-            ISBN: input.ISBN,
-            title: input.title,
-            author: input.author,
-            publisher: input.publisher,
-            year: input.year,
-            edition: input.edition,
-            language: input.language,
-            copyright: input.copyright,
-            barcode: input.barcode,
-            size: input.size,
-            weight: input.weight,
-            coverType: input.coverType,
-            pageCount: input.pageCount,
-            digitalFileLink: input.digitalFileLink,
-            doi: input.doi,
-            invoiceDetails: input.invoiceDetails,
-            publisherConfirmation: input.publisherConfirmation,
-            intellectualPropertyRegistration: input
-                .intellectualPropertyRegistration,
-            exists: true
-        });
-
-        emit BookAdded(input.ISBN, input.title, input.author);
+        emit BookAdded(input.ISBN_13, input.title, input.author);
     }
 
     /**
@@ -147,26 +116,28 @@ contract BookChain {
     ) public view bookExists(_ISBN) returns (BookInput memory) {
         Book storage book = books[_ISBN];
         return
-            BookInput({
-                ISBN: book.ISBN,
-                title: book.title,
-                author: book.author,
-                publisher: book.publisher,
-                year: book.year,
-                edition: book.edition,
-                language: book.language,
-                copyright: book.copyright,
-                barcode: book.barcode,
-                size: book.size,
-                weight: book.weight,
-                coverType: book.coverType,
-                pageCount: book.pageCount,
-                digitalFileLink: book.digitalFileLink,
-                doi: book.doi,
-                invoiceDetails: book.invoiceDetails,
-                publisherConfirmation: book.publisherConfirmation,
-                intellectualPropertyRegistration: book
-                    .intellectualPropertyRegistration
-            });
+            BookInput(
+                book.id,
+                book.eTag,
+                book.title,
+                book.subtitle,
+                book.author,
+                book.publisher,
+                book.publishedDate,
+                book.description,
+                book.ISBN_10,
+                book.ISBN_13,
+                book.pageCount,
+                book.categories,
+                book.language,
+                book.saleInfo,
+                book.saleability,
+                book.isEBook,
+                book.epub,
+                book.pdf,
+                book.accessInfo,
+                book.viewability,
+                book.publicDomain
+            );
     }
 }
